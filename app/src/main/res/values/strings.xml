@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Bread</string>
+    <string name="PasswordText">Password</string>
+    <string name="LoginText">Login</string>
 </resources>
