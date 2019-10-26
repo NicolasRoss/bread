@@ -2,4 +2,9 @@
     <string name="app_name">Bread</string>
     <string name="PasswordText">Password</string>
     <string name="LoginText">Login</string>
+    <string name="AccountSummaryToolbar">Account Summary</string>
+    <string name="BudgetToolbar">Budget</string>
+    <string name="StocksToolbar">Stocks</string>
+    <string name="AboutToolbar">About</string>
+    <string name="HomepageToolbar">Homepage</string>
 </resources>
