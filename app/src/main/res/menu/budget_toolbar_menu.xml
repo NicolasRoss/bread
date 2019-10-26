@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/homepage"
+        app:showAsAction="always"
+        android:orderInCategory="101"
+        android:icon="@drawable/baseline_account_balance_black_18dp"
+        android:title="@string/HomepageToolbar"/>
+
+    <item
+        android:id="@+id/account_summary"
+        app:showAsAction="always"
+        android:orderInCategory="102"
+        android:icon="@drawable/baseline_account_balance_wallet_black_18dp"
+        android:title="@string/AccountSummaryToolbar"/>
+
+    <item
+        android:id="@+id/budget"
+        app:showAsAction="always"
+        android:orderInCategory="103"
+        android:icon="@drawable/baseline_today_white_18dp"
+        android:title="@string/BudgetToolbar"/>
+
+    <item
+        android:id="@+id/stocks"
+        app:showAsAction="always"
+        android:orderInCategory="104"
+        android:icon="@drawable/baseline_trending_up_black_18dp"
+        android:title="@string/StocksToolbar"/>
+
+    <item
+        android:id="@+id/action_about"
+        app:showAsAction="never"
+        android:orderInCategory="105"
+        android:title="AboutToolbar"/>
+</menu>
