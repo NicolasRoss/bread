@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    public boolean
     @Override
     protected void onResume() {
         super.onResume();
