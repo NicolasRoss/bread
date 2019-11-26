@@ -2,6 +2,8 @@ package com.example.bread;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -30,18 +32,24 @@ public class MainActivity extends AppCompatActivity {
                 break;
 
             case R.id.account_summary:
-                Log.d("Toolbar", "Option 1 selected");
+                Log.d("Account", "Option 1 selected");
                 // go to account summary layout
+                Intent intent = new Intent(this, account.class);
+                startActivity(intent);
                 break;
 
             case R.id.budget:
-                Log.d("Toolbar", "Option 2 selected");
+                Log.d("budget", "Option 2 selected");
                 // go to budget layout
+//                Intent intent = new Intent(this, .class);
+//                startActivity(intent);
                 break;
 
             case R.id.stocks:
-                Log.d("Toolbar", "Option 3 selected");
+                Log.d("stonks", "Option 3 selected");
                 // go to stocks layout
+                Intent intentStocks = new Intent(this, stonks.class);
+                startActivity(intentStocks);
                 break;
 
             case R.id.action_about:
