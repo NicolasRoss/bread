@@ -47,14 +47,14 @@ public class Database extends SQLiteOpenHelper {
         super(ctx, DB_NAME, null, VERSION_NUM);
     }
 
-    public void onCreate(SQLiteDatabase db){
-        Log.i("Database", "Calling onCreate");
-        Log.i("Database", "creating USERS");
-        db.execSQL(USER_CREATE);
-        Log.i("Database", "creating BANK_CARD");
-        db.execSQL(BANK_CARD_CREATE);
-        Log.i("Database", "creating STOCKS");
-        db.execSQL(STOCK_CREATE);
+        public void onCreate(SQLiteDatabase db){
+            Log.i("Database", "Calling onCreate");
+            Log.i("Database", "creating USERS");
+            db.execSQL(USER_CREATE);
+            Log.i("Database", "creating BANK_CARD");
+            db.execSQL(BANK_CARD_CREATE);
+            Log.i("Database", "creating STOCKS");
+            db.execSQL(STOCK_CREATE);
 
     }
 
