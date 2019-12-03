@@ -1,7 +1,9 @@
 package com.example.bread;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class login extends AppCompatActivity {
     protected static final String ACTIVITY_NAME = "login";
@@ -30,13 +33,28 @@ public class login extends AppCompatActivity {
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putString("DefaultEmail", email_field.getText().toString());
                 editor.commit();
+
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 Log.d("My_tag", intent.toString());
-                startActivity(intent);
+                startActivityForResult(intent, 10);
             }
         }));
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int responseCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, responseCode, data);
+
+        if (requestCode == 10) {
+            Log.i(ACTIVITY_NAME, "Returned to login.onActivityResult");
+        }
+
+        if(responseCode == Activity.RESULT_OK) {
+            CharSequence text = ("Logout successful.") ;
+            Toast toast = Toast.makeText(getApplicationContext(),text, Toast.LENGTH_LONG);
+            toast.show();
+        }
+    }
 
     @Override
     protected void onResume() {
