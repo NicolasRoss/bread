@@ -7,4 +7,10 @@
     <string name="StocksToolbar">Stocks</string>
     <string name="AboutToolbar">About</string>
     <string name="HomepageToolbar">Homepage</string>
+    <string name="add">Add</string>
+    <string name="cancel">Cancel</string>
+    <string name="card_dialog">Card information</string>
+    <string name="logout_dialog">Would you like to logout?</string>
+    <string name="logout_title">Logout</string>
+    <string name="ok">Ok</string>
 </resources>
