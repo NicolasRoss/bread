@@ -6,6 +6,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+/**
+ * This is a ListView on our MainActivity screen to show all your cards.
+ *
+ */
 public class cardDetails extends AppCompatActivity {
 
     @Override

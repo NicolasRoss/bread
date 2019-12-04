@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+/**
+ *
+ */
 public class stonks extends AppCompatActivity {
     static SQLiteDatabase db;
     static final String GET_STOCK_DATA = "SELECT STOCK_NAME, STOCK_VALUE FROM STOCKS";
