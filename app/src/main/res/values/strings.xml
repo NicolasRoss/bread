@@ -13,4 +13,6 @@
     <string name="logout_dialog">Would you like to logout?</string>
     <string name="logout_title">Logout</string>
     <string name="ok">Ok</string>
+    <string name="dialog_message">Please fill out your information</string>
+    <string name="AccountCreation">Your account has been created</string>
 </resources>

@@ -74,7 +74,7 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(userQuery);
         db.execSQL(bcQuery);
         db.execSQL(stockQuery);
-        db.execSQL(transQuery)
+        db.execSQL(transQuery);
         onCreate(db);
     }
 
