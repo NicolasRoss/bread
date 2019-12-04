@@ -12,7 +12,6 @@ public class Database extends SQLiteOpenHelper {
 //    USERS
     public static final int VERSION_NUM = 1;
     public static final String USERS = "USERS";
-    public static final String USER_ID = "USER_ID";
     public static final String FNAME = "FIRST_NAME";
     public static final String LNAME = "LAST_NAME";
     public static final String EMAIL = "EMAIL";
@@ -24,24 +23,29 @@ public class Database extends SQLiteOpenHelper {
     public static final String STOCKS = "STOCKS";
     public static final String STOCK_NAME = "STOCK_NAME";
     public static final String STOCK_VALUE = "STOCK_VALUE";
+    public static final String COST = "COST";
+    public static final String TRANSACTIONS = "TRANSACTIONS";
 
 
 //    CREATE QUERIES
 //    USERS
     public static final String USER_CREATE = "create table "
-            + USERS + "(" + USER_ID + " integer primary key autoincrement, "+ FNAME
-            + " text not null, " + LNAME + " text not null, " + EMAIL + " text not null, "
+            + USERS + "(" + EMAIL + " text not null, "+ FNAME
+            + " text not null, " + LNAME + " text not null, "
             + PW + " text not null);";
 //    BANK_CARDS
     public static final String BANK_CARD_CREATE = "create table "
-            + BANK_CARDS + "(" + USER_ID + "integer primary key, " + CARD_NUM + " integer not null, " + FNAME
+            + BANK_CARDS + "(" + EMAIL + "text not null, " + CARD_NUM + " text not null, " + FNAME
             + " text not null, " + LNAME + " text not null);";
 //    STOCKS
     public static final String STOCK_CREATE = "create table "
             + STOCKS + "(" + STOCK_NAME + " text primary key, " + STOCK_VALUE
             + " Float not null);";
 
-
+//   TRANSACTIONS
+    public static final String TRANS_CREATE = "create table "
+        + TRANSACTIONS + "(" + EMAIL + " text primary key, "
+        + COST + "text not null);";
 
     public Database(Context ctx){
         super(ctx, DB_NAME, null, VERSION_NUM);
@@ -55,6 +59,8 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(BANK_CARD_CREATE);
         Log.i("Database", "creating STOCKS");
         db.execSQL(STOCK_CREATE);
+        Log.i("Database", "creating TRANSACTIONS");
+        db.execSQL(TRANS_CREATE);
 
     }
 
@@ -63,10 +69,12 @@ public class Database extends SQLiteOpenHelper {
         final String userQuery = "DROP TABLE IF EXISTS " + USERS;
         final String bcQuery = "DROP TABLE IF EXISTS " + BANK_CARDS;
         final String stockQuery = "DROP TABLE IF EXISTS " + STOCKS;
+        final String transQuery = "DROP TABLE IF EXISTS " +TRANSACTIONS;
 //        final String query = "DROP TABLE IF EXISTS " + USERS;
         db.execSQL(userQuery);
         db.execSQL(bcQuery);
         db.execSQL(stockQuery);
+        db.execSQL(transQuery)
         onCreate(db);
     }
 
