@@ -10,7 +10,7 @@ public class Database extends SQLiteOpenHelper {
 //    TABLES ARE: USERS, BANK_CARDS, STOCKS, TRANSACTIONS,
     public static final String DB_NAME = "data.db";
 //    USERS
-    public static final int VERSION_NUM = 1;
+    public static final int VERSION_NUM = 2;
     public static final String USERS = "USERS";
     public static final String FNAME = "FIRST_NAME";
     public static final String LNAME = "LAST_NAME";
@@ -39,13 +39,13 @@ public class Database extends SQLiteOpenHelper {
             + " text not null, " + LNAME + " text not null);";
 //    STOCKS
     public static final String STOCK_CREATE = "create table "
-            + STOCKS + "(" + STOCK_NAME + " text primary key, " + STOCK_VALUE
+            + STOCKS + "(" + STOCK_NAME + " text not null, " + STOCK_VALUE
             + " Float not null);";
 
 //   TRANSACTIONS
     public static final String TRANS_CREATE = "create table "
-        + TRANSACTIONS + "(" + EMAIL + " text primary key, "
-        + COST + "text not null);";
+        + TRANSACTIONS + "(" + EMAIL + " text not null, "
+        + COST + " text not null);";
 
     public Database(Context ctx){
         super(ctx, DB_NAME, null, VERSION_NUM);
@@ -74,7 +74,7 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(userQuery);
         db.execSQL(bcQuery);
         db.execSQL(stockQuery);
-        db.execSQL(transQuery)
+        db.execSQL(transQuery);
         onCreate(db);
     }
 
