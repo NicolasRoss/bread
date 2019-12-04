@@ -91,7 +91,6 @@ public class login extends AppCompatActivity {
                                     int duration = Toast.LENGTH_SHORT;
                                     Toast createaccount_toast = Toast.makeText(getApplicationContext(), toasttext, duration);
                                     createaccount_toast.show();
-
                                     ContentValues content = new ContentValues();
                                     content.put(Database.EMAIL, emails);
                                     content.put(Database.FNAME, fnames);
