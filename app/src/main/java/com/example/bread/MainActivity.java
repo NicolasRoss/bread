@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,7 +22,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Log.i(ACTIVITY_NAME, "In onCreate()");
 
+        cards = new ArrayList<>();
         Database dbHelper = new Database(this);
         database = dbHelper.getWritableDatabase();
         cursor = database.rawQuery(GET_CARDS, null);
@@ -69,17 +70,14 @@ public class MainActivity extends AppCompatActivity {
         }
 
         cardView = findViewById(R.id.card_view);
-        cards = new ArrayList<>();
-
-        cardAdapter = new CardAdapter(this);
-        cardView.setAdapter(cardAdapter);
-
+        cursor.moveToFirst();
         cardView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String card = cursor.getString(cursor.getColumnIndex("CARD_NUMBER"));
                 String fname = cursor.getString(cursor.getColumnIndex("FIRST_NAME"));
                 String lname = cursor.getString(cursor.getColumnIndex("LAST_NAME"));
+                Log.i(ACTIVITY_NAME, card);
                 Bundle arguments = new Bundle();
                 Log.i("Passing Card Number", card);
 
@@ -118,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
                         .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 // User clicked OK button
-                                Intent resultIntent = new Intent(  );
+                                Intent resultIntent = new Intent(MainActivity.this, login.class);
                                 resultIntent.putExtra("Response", "Here is my response");
                                 setResult(Activity.RESULT_OK, resultIntent);
                                 finish();
@@ -155,6 +153,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        cardAdapter = new CardAdapter(this);
         addcard = findViewById(R.id.add_card);
         addcard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -183,9 +182,14 @@ public class MainActivity extends AppCompatActivity {
 
                                 if (num.length() == 16 && !first.equals("") && !last.equals("")) {
                                     cards.add(num);
+                                    //Add all the views to the database.
+                                    ContentValues cValues = new ContentValues();
+                                    cValues.put(Database.CARD_NUM, num);
+                                    cValues.put(Database.FNAME, first);
+                                    cValues.put(Database.LNAME, last);
+                                    database.insert(Database.BANK_CARDS, "NullPlaceHolder", cValues);
                                     cardAdapter.notifyDataSetChanged();
                                     cardNumber.setText("");
-                                    //Add all the views to the database.
 
                                     Log.i(ACTIVITY_NAME, "Item Added:" + cardNumber.getText().toString());
 
@@ -211,6 +215,8 @@ public class MainActivity extends AppCompatActivity {
                 .show();
             }
         });
+
+        cardView.setAdapter(cardAdapter);
     }
 
     private class CardAdapter extends ArrayAdapter<String> {
@@ -223,6 +229,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         public String getItem(int position) {
+
             return cards.get(position);
         }
 
@@ -262,6 +269,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        database.close();
         Log.i(ACTIVITY_NAME, "In onDestroy()");
     }
 
@@ -272,7 +280,7 @@ public class MainActivity extends AppCompatActivity {
             String row = data.getStringExtra("row");
             Log.i("delete row: ", ""+row);
             database.delete(Database.BANK_CARDS,Database.CARD_NUM+ "="+row,null);
-            cards.remove(Integer.parseInt(row)-1);
+            cards.remove(row);
             cardAdapter.notifyDataSetChanged();
         }
 
@@ -280,7 +288,7 @@ public class MainActivity extends AppCompatActivity {
 
     void deleteRow(String row){
         FragmentManager fragmentManager = getSupportFragmentManager();
-        database.delete(Database.BANK_CARDS,Database.CARD_NUM+ "="+row,null);
+        database.delete(Database.BANK_CARDS,Database.CARD_NUM+ "="+ row,null);
         cards.remove(row);
 
         ft = fragmentManager.beginTransaction();
