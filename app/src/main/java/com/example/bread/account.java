@@ -34,7 +34,7 @@ import java.util.ArrayList;
 
 public class account extends AppCompatActivity {
     protected static final String ACTIVITY_NAME = "Account";
-    static final String GET_TRANSACTIONS = "SELECT * FROM TRANSACTIONS";
+    static final String GET_TRANSACTIONS = "SELECT COST FROM TRANSACTIONS";
     final ArrayList<String> trans = new ArrayList<>();
 
     static SQLiteDatabase database;
@@ -90,8 +90,8 @@ public class account extends AppCompatActivity {
                     }
                     trans.add(value);
                     ContentValues cValues = new ContentValues();
-                    cValues.put(Database.EMAIL,"test@gmail.com");
                     cValues.put(Database.COST,value);
+                    cValues.put(Database.EMAIL,"test");
                     database.insert(Database.TRANSACTIONS,"NullPlaceHolder",cValues);
                     transAdapter.notifyDataSetChanged();
                 }catch(Exception e){
@@ -117,9 +117,10 @@ public class account extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String value = edtText.getText().toString();
+                //System.out.println(value);
                 int index = trans.indexOf(value);
                 try {
-                    database.delete(Database.TRANSACTIONS,Database.COST+ "="+value,null);
+                    database.delete(Database.TRANSACTIONS,Database.COST+"="+value,null);
                     trans.remove(index);
                     transAdapter.notifyDataSetChanged();
                 }catch(Exception e){
