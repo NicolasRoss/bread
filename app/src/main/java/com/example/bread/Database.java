@@ -42,9 +42,8 @@ public class Database extends SQLiteOpenHelper {
             + STOCKS + "(" + STOCK_NAME + " text primary key, " + STOCK_VALUE
             + " Float not null);";
 
-    //   TRANSACTIONS
     public static final String TRANS_CREATE = "create table "
-            + TRANSACTIONS + "(" + EMAIL + " text primary key, "
+            + TRANSACTIONS + "(" + EMAIL + " text not null, "
             + COST + " text not null);";
 
     public Database(Context ctx){
