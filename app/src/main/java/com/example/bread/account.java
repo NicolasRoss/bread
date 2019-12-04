@@ -1,12 +1,16 @@
 package com.example.bread;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +34,16 @@ import java.util.ArrayList;
 
 public class account extends AppCompatActivity {
     protected static final String ACTIVITY_NAME = "Account";
+    static final String GET_TRANSACTIONS = "SELECT COST FROM TRANSACTIONS";
+    final ArrayList<String> trans = new ArrayList<>();
+
+    static SQLiteDatabase database;
+    Cursor cursor;
+
+    //FrameLayout frameLayout;
+    //TransFragment fragment;
+    //FragmentTransaction fragmentTransaction;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +53,17 @@ public class account extends AppCompatActivity {
         final Button buttonDel = findViewById(R.id.btnDel);
         final ListView lstTrans = findViewById(R.id.listview_transactions);
         final EditText edtText = findViewById(R.id.editText);
-        final ArrayList<String> trans = new ArrayList<>();
+
+        Database dbHelper = new Database(this);
+        database = dbHelper.getWritableDatabase();
+        //System.out.println("HERE");
+        cursor = database.rawQuery(GET_TRANSACTIONS,null);
+        cursor.moveToFirst();
+        while(!cursor.isAfterLast()){
+            Log.i(ACTIVITY_NAME,"VALUE: "+ cursor.getString(cursor.getColumnIndex(Database.COST)));
+            trans.add(cursor.getString(cursor.getColumnIndex(Database.COST)));
+            cursor.moveToNext();
+        }
 
         class TransAdapter extends ArrayAdapter {
             public TransAdapter(Context ctx){super(ctx,0);}
@@ -53,7 +78,6 @@ public class account extends AppCompatActivity {
             }
         }
         final TransAdapter transAdapter = new TransAdapter(this);
-        lstTrans.setAdapter(transAdapter);
         buttonAdd.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -65,6 +89,10 @@ public class account extends AppCompatActivity {
                         value = value +  ".00";
                     }
                     trans.add(value);
+                    ContentValues cValues = new ContentValues();
+                    cValues.put(Database.COST,value);
+                    cValues.put(Database.EMAIL,"test");
+                    database.insert(Database.TRANSACTIONS,"NullPlaceHolder",cValues);
                     transAdapter.notifyDataSetChanged();
                 }catch(Exception e){
                     android.app.AlertDialog.Builder builder = new AlertDialog.Builder(account.this);
@@ -89,8 +117,10 @@ public class account extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String value = edtText.getText().toString();
+                //System.out.println(value);
                 int index = trans.indexOf(value);
                 try {
+                    database.delete(Database.TRANSACTIONS,Database.COST+"="+value,null);
                     trans.remove(index);
                     transAdapter.notifyDataSetChanged();
                 }catch(Exception e){
@@ -115,6 +145,8 @@ public class account extends AppCompatActivity {
                 Snackbar.make(view,text,duration).setAction("Reaction",null).show();
             }
         });
+        lstTrans.setAdapter(transAdapter);
+
     }
 
     public boolean onCreateOptionsMenu(Menu m) {
@@ -188,6 +220,7 @@ public class account extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        database.close();
         Log.i(ACTIVITY_NAME, "In onDestroy()");
     }
 }
