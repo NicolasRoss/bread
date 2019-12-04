@@ -7,19 +7,19 @@ import android.util.Log;
 
 public class Database extends SQLiteOpenHelper {
 
-//    TABLES ARE: USERS, BANK_CARDS, STOCKS, TRANSACTIONS,
+    //    TABLES ARE: USERS, BANK_CARDS, STOCKS, TRANSACTIONS,
     public static final String DB_NAME = "data.db";
-//    USERS
-    public static final int VERSION_NUM = 1;
+    //    USERS
+    public static final int VERSION_NUM = 2;
     public static final String USERS = "USERS";
     public static final String FNAME = "FIRST_NAME";
     public static final String LNAME = "LAST_NAME";
     public static final String EMAIL = "EMAIL";
     public static final String PW = "PASSWORD";
-//    BANK_CARDS
+    //    BANK_CARDS
     public static final String BANK_CARDS = "BANK_CARDS";
     public static final String CARD_NUM = "CARD_NUMBER";
-//    STOCKS
+    //    STOCKS
     public static final String STOCKS = "STOCKS";
     public static final String STOCK_NAME = "STOCK_NAME";
     public static final String STOCK_VALUE = "STOCK_VALUE";
@@ -27,25 +27,24 @@ public class Database extends SQLiteOpenHelper {
     public static final String TRANSACTIONS = "TRANSACTIONS";
 
 
-//    CREATE QUERIES
+    //    CREATE QUERIES
 //    USERS
     public static final String USER_CREATE = "create table "
             + USERS + "(" + EMAIL + " text not null, "+ FNAME
             + " text not null, " + LNAME + " text not null, "
             + PW + " text not null);";
-//    BANK_CARDS
+    //    BANK_CARDS
     public static final String BANK_CARD_CREATE = "create table "
             + BANK_CARDS + "(" + EMAIL + "text not null, " + CARD_NUM + " text not null, " + FNAME
             + " text not null, " + LNAME + " text not null);";
-//    STOCKS
+    //    STOCKS
     public static final String STOCK_CREATE = "create table "
             + STOCKS + "(" + STOCK_NAME + " text primary key, " + STOCK_VALUE
             + " Float not null);";
 
-//   TRANSACTIONS
     public static final String TRANS_CREATE = "create table "
-        + TRANSACTIONS + "(" + EMAIL + " text primary key, "
-        + COST + "text not null);";
+            + TRANSACTIONS + "(" + EMAIL + " text not null, "
+            + COST + " text not null);";
 
     public Database(Context ctx){
         super(ctx, DB_NAME, null, VERSION_NUM);
@@ -74,7 +73,7 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(userQuery);
         db.execSQL(bcQuery);
         db.execSQL(stockQuery);
-        db.execSQL(transQuery)
+        db.execSQL(transQuery);
         onCreate(db);
     }
 
