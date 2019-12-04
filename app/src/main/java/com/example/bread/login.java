@@ -20,18 +20,43 @@ import android.widget.Toast;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * The login window is the first window in our application.
+ * The activity has two fields, email and password and two buttons, login and create account.
+ * If you type your email and password correctly, and click Login you should be able to get into
+ * our Main Activity screen which holds all of our options in the app.
+ * If you click on Create Account, it opens a dialogbox which asks for your first and last name, email and password.
+ * If all are filled out, and the email field is filled out correctly then your account is added to our USERS database table and
+ * a toast will come up saying your account has been added to the app. If you missed a field, or wrote your email incorrectly,
+ * then a toast will return a message saying a field was not filed in correctly.
+ * This is the database table we iterate over to check in the login field.
+ *
+ */
 public class login extends AppCompatActivity {
     protected static final String ACTIVITY_NAME = "login";
     static SQLiteDatabase db;
     private static final Pattern VALID_EMAIL_ADDRESS_REGEX =
             Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
+    /**
+     * This validates if the email you entered is an actual email or not.
+     * @param email
+     * @return
+     */
     public static boolean checkEmailForValidity(String email) {
         email = email.trim();
         Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(email);
         return matcher.find();
     }
 
+    /**
+     * Our onCreate function opens our login page. First activity window in our application.
+     * You use the two EditText fields to login, and there is another button for creating account. This
+     * opens a dialogBox that takes First, Last name, email and password. If correctly inputted, a toast is returned
+     * saying your account has been created. If not inputted correctly, a toast will say you have messed up
+     * your entries.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -117,6 +142,12 @@ public class login extends AppCompatActivity {
         });
     }
 
+    /**
+     *
+     * @param requestCode
+     * @param responseCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int responseCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, responseCode, data);

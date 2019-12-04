@@ -29,6 +29,13 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+/**
+ * This is the our home screen. It holds 5 buttons, ListView and TextView.
+ * You are able to add your card which will be added to our ListView and Database.
+ * The other 3 buttons, are gateways to our other Activities and one button is our settings button that will
+ * show the app information.
+ * The TextView shows the current User's balance.
+ */
 public class MainActivity extends AppCompatActivity {
     protected static final String ACTIVITY_NAME = "MainActivity";
     static final String GET_CARDS = "SELECT CARD_NUMBER, FIRST_NAME, LAST_NAME FROM BANK_CARDS";
@@ -45,6 +52,11 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> cards;
     CardAdapter cardAdapter;
 
+    /**
+     * This opens the Activity on our application. Setting up the ListView by retreiving card information
+     * from the Database.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +83,9 @@ public class MainActivity extends AppCompatActivity {
 
         cardView = findViewById(R.id.card_view);
         cursor.moveToFirst();
+        /**
+         * This is setting the information from our DialogBox to input it into the database.
+         */
         cardView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -92,6 +107,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         accButton = findViewById(R.id.account);
+        /**
+         * This is an action button. This button takes you to our Account Activity screen.
+         */
         accButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -103,6 +121,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         logButton = findViewById(R.id.logout);
+        /**
+         * This leads to our logout login screen if "ok" is clicked when the dialogBox is opened up on our screen.
+         */
         logButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -143,6 +164,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         stockButton = findViewById(R.id.stocks);
+        /**
+         * This button takes you to you stonks Activity.
+         */
         stockButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -155,6 +179,11 @@ public class MainActivity extends AppCompatActivity {
 
         cardAdapter = new CardAdapter(this);
         addcard = findViewById(R.id.add_card);
+        /**
+         * When the 'Add Card' button is clicked it brings up a dialogBox to input your Card number,
+         * Last Name, and First name. Once you enter in a correct card number and your first and last name
+         * the card number will be added to a ListView and the Database. This is where you can manage your cards.
+         */
         addcard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -219,6 +248,9 @@ public class MainActivity extends AppCompatActivity {
         cardView.setAdapter(cardAdapter);
     }
 
+    /**
+     *
+     */
     private class CardAdapter extends ArrayAdapter<String> {
         public CardAdapter(Context ctx){
             super(ctx, 0);
@@ -233,6 +265,13 @@ public class MainActivity extends AppCompatActivity {
             return cards.get(position);
         }
 
+        /**
+         * When an Item in the ListView is clicked, this inflates the fragment containing card information.
+         * @param position
+         * @param convertView
+         * @param parent
+         * @return
+         */
         public View getView(int position, View convertView, ViewGroup parent) {
             LayoutInflater inflater = MainActivity.this.getLayoutInflater();
             View result = inflater.inflate(R.layout.card_display, null);

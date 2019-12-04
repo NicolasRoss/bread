@@ -13,6 +13,9 @@ import android.widget.Toast;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * This is creating a newUser in the database. This asks for first name, last name, email, password.
+ */
 public class NewUser extends AppCompatActivity {
     protected static final String ACTIVITY_NAME = "NewUser";
     EditText inputfirstandlastname, inputemail, inputpassword, inputpostalcode;
