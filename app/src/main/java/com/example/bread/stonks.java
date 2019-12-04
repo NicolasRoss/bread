@@ -19,32 +19,66 @@ public class stonks extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_stonks);
 
-        Float[] data = new Float[] {1.0F,2.0F,3.0F,4.0F,5.0F,6.0F};
-        LineChart chart = (LineChart) findViewById(R.id.chart);
+        Float[] data = new Float[] {1.0F,2.0F,3.0F,4.0F,5.0F,6.0F,6.0F, 6.0F, 6.0F, 6.0F, 6.0F, 5.0F, 4.0F, 5.0F, 7.0F, 10.0F, 6.0F,1.0F,2.0F,3.0F,4.0F,5.0F,6.0F,6.0F, 6.0F, 6.0F, 6.0F, 6.0F, 5.0F, 4.0F, 5.0F, 7.0F, 10.0F, 6.0F};
+        LineChart chart1 = (LineChart) findViewById(R.id.chart1);
+        LineChart chart2 = (LineChart) findViewById(R.id.chart2);
+        LineChart chart3 = (LineChart) findViewById(R.id.chart3);
+
 //        WE NEED TO QUERY DATA BASED ON BUTTON LISTENERS, DEFAULT WILL BE 1W
 
         List<Entry> entries = new ArrayList<Entry>();
         Float i = 1F;
         for (Float x: data){
-            entries.add(new Entry(x, i));
+            entries.add(new Entry(i,x));
             i+=1F;
         }
 
-        LineDataSet dataSet = new LineDataSet(entries, "PRICE(USD)");
+        LineDataSet dataSet = new LineDataSet(entries, "AAPL(USD)");
         dataSet.setLineWidth(2F);
+        dataSet.setDrawValues(false);
         LineData lineData = new LineData(dataSet);
-
-        chart.setData(lineData);
-        chart.setDrawBorders(false);
-        chart.setDrawGridBackground(false);
+//CHART 1
+        chart1.setData(lineData);
+        chart1.setDrawBorders(false);
+        chart1.setDrawGridBackground(false);
 //        chart.setAutoScaleMinMaxEnabled(true);
-        chart.getAxisLeft().setDrawGridLines(false);
-        chart.getAxisRight().setDrawGridLines(false);
-        chart.getXAxis().setDrawGridLines(false);
+        chart1.getAxisLeft().setDrawGridLines(false);
+        chart1.getAxisRight().setDrawGridLines(false);
+        chart1.getXAxis().setDrawGridLines(false);
 
-        chart.getDescription().setEnabled(false);
-        chart.animateY(1000);
+        chart1.getDescription().setEnabled(false);
+        chart1.animateY(1000);
 
-        chart.invalidate();
+        chart1.invalidate();
+//CHART 2
+
+        chart2.setData(lineData);
+        chart2.setDrawBorders(false);
+        chart2.setDrawGridBackground(false);
+//        chart.setAutoScaleMinMaxEnabled(true);
+        chart2.getAxisLeft().setDrawGridLines(false);
+        chart2.getAxisRight().setDrawGridLines(false);
+        chart2.getXAxis().setDrawGridLines(false);
+
+        chart2.getDescription().setEnabled(false);
+        chart2.animateY(1000);
+
+        chart2.invalidate();
+
+//CHART 3
+        chart3.setData(lineData);
+        chart3.setDrawBorders(false);
+        chart3.setDrawGridBackground(false);
+//        chart.setAutoScaleMinMaxEnabled(true);
+        chart3.getAxisLeft().setDrawGridLines(false);
+        chart3.getAxisRight().setDrawGridLines(false);
+        chart3.getXAxis().setDrawGridLines(false);
+
+        chart3.getDescription().setEnabled(false);
+        chart3.animateY(1000);
+
+        chart3.invalidate();
+
+
     }
 }
