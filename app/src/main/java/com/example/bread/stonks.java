@@ -3,10 +3,14 @@ package com.example.bread;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
@@ -17,9 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-/**
- *
- */
 public class stonks extends AppCompatActivity {
     static SQLiteDatabase db;
     static final String GET_STOCK_DATA = "SELECT STOCK_NAME, STOCK_VALUE FROM STOCKS";
@@ -32,8 +33,9 @@ public class stonks extends AppCompatActivity {
 
         Database dbHelper = new Database(this);
         db = dbHelper.getWritableDatabase();
-//        generateData();
+        generateData();
         final Cursor cursor = db.rawQuery(GET_STOCK_DATA, null);
+        System.out.println(cursor);
         cursor.moveToFirst();
         ArrayList<Float> data1 = new ArrayList<Float>();
         ArrayList<Float> data2 = new ArrayList<Float>();
@@ -61,9 +63,9 @@ public class stonks extends AppCompatActivity {
 
 
 //        Float[] data = new Float[] {1.0F,2.0F,3.0F,4.0F,5.0F,6.0F,6.0F, 6.0F, 6.0F, 6.0F, 6.0F, 5.0F, 4.0F, 5.0F, 7.0F, 10.0F, 6.0F,1.0F,2.0F,3.0F,4.0F,5.0F,6.0F,6.0F, 6.0F, 6.0F, 6.0F, 6.0F, 5.0F, 4.0F, 5.0F, 7.0F, 10.0F, 6.0F};
-        LineChart chart1 = (LineChart) findViewById(R.id.chart1);
-        LineChart chart2 = (LineChart) findViewById(R.id.chart2);
-        LineChart chart3 = (LineChart) findViewById(R.id.chart3);
+        LineChart chart1 =  findViewById(R.id.chart1);
+        LineChart chart2 =  findViewById(R.id.chart2);
+        LineChart chart3 =  findViewById(R.id.chart3);
 
 //        WE NEED TO QUERY DATA BASED ON BUTTON LISTENERS, DEFAULT WILL BE 1W
 
@@ -107,10 +109,8 @@ public class stonks extends AppCompatActivity {
         chart1.getAxisLeft().setDrawGridLines(false);
         chart1.getAxisRight().setDrawGridLines(false);
         chart1.getXAxis().setDrawGridLines(false);
-
         chart1.getDescription().setEnabled(false);
         chart1.animateY(1000);
-
         chart1.invalidate();
 //CHART 2
         LineDataSet dataSet2 = new LineDataSet(entries2, "TSLA(USD)");
@@ -124,7 +124,6 @@ public class stonks extends AppCompatActivity {
         chart2.getAxisLeft().setDrawGridLines(false);
         chart2.getAxisRight().setDrawGridLines(false);
         chart2.getXAxis().setDrawGridLines(false);
-
         chart2.getDescription().setEnabled(false);
         chart2.animateY(1000);
 
@@ -142,7 +141,6 @@ public class stonks extends AppCompatActivity {
         chart3.getAxisLeft().setDrawGridLines(false);
         chart3.getAxisRight().setDrawGridLines(false);
         chart3.getXAxis().setDrawGridLines(false);
-
         chart3.getDescription().setEnabled(false);
         chart3.animateY(1000);
 
@@ -164,29 +162,46 @@ public class stonks extends AppCompatActivity {
         }
     }
 
-    public void generateGraph(ArrayList<Float> data1, LineChart chart1){
-        List<Entry> entries1 = new ArrayList<Entry>();
+    public boolean onCreateOptionsMenu(Menu m) {
+        getMenuInflater().inflate(R.menu.stocks_toolbar_menu, m);
+        return true;
+    }
 
-        Float i = 1F;
-        for (Float x: data1){
-            entries1.add(new Entry(i,x));
-            i+=1F;
+    public boolean onOptionsItemSelected(MenuItem mi) {
+        switch (mi.getItemId()) {
+            case R.id.homepage:
+                Log.d("Homepage","Option 1 selected");
+                Intent intentHP = new Intent(this,MainActivity.class);
+                startActivity(intentHP);
+                //do nothing
+                break;
+
+            case R.id.account_summary:
+                // do Nothing
+
+                break;
+
+            case R.id.budget:
+                Log.d("budget", "Option 2 selected");
+                // go to budget layout
+                //Intent intent = new Intent(this, .class);
+                //startActivity(intent);
+                break;
+
+            case R.id.stocks:
+//                Log.d("stonks", "Option 3 selected");
+//                // go to stocks layout
+//                Intent intentStocks = new Intent(this, stonks.class);
+//                startActivity(intentStocks);
+                break;
+
+            case R.id.action_about:
+                Log.d("Toolbar", "Option 4 selected");
+                int duration = Toast.LENGTH_LONG;
+                Toast toast = Toast.makeText(getApplicationContext(), R.string.authors, duration);
+                toast.show();
+                break;
         }
-        LineDataSet dataSet = new LineDataSet(entries1, "AAPL(USD)");
-        dataSet.setLineWidth(2F);
-        dataSet.setDrawValues(false);
-        LineData lineData = new LineData(dataSet);
-        chart1.setData(lineData);
-        chart1.setDrawBorders(false);
-        chart1.setDrawGridBackground(false);
-//        chart.setAutoScaleMinMaxEnabled(true);
-        chart1.getAxisLeft().setDrawGridLines(false);
-        chart1.getAxisRight().setDrawGridLines(false);
-        chart1.getXAxis().setDrawGridLines(false);
-
-        chart1.getDescription().setEnabled(false);
-        chart1.animateY(1000);
-
-        chart1.invalidate();
+        return true;
     }
 }

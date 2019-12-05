@@ -33,7 +33,6 @@ public class NewUser extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_user);
-        //Setting all the values from the xml file with a variable
         inputfirstandlastname = (EditText) findViewById(R.id.fname_txt);
         inputemail = (EditText) findViewById(R.id.inputemail_txt);
         inputpassword = (EditText) findViewById(R.id.inputpassword_txt);
