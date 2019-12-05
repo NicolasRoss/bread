@@ -5,12 +5,24 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+/**
+ * Let's get this Bread
+ * Creating and generating our database. It consists of 4 tables, BANK_CARDS, USERS, STOCKS, TRANSACTIONS.
+ * The BANK_CARDS table's columns are as follows: BANK_CARDS, EMAIL, CARD_NUM, FNAME, LNAME
+ * The USERS table's columns are as follows: EMAIL, FNAME, LNAME, PW (PASSWORD)
+ * The STOCKS table's columns are as follows: STOCK_NAME, STOCK_VALUE
+ * The TRANSACTION table's collumns are as follows: COST, EMAIL.
+ * The Id for all the tables are EMAIL.
+ * @author Noah Nichols
+ * @version 2019.12
+ */
 public class Database extends SQLiteOpenHelper {
 
     //    TABLES ARE: USERS, BANK_CARDS, STOCKS, TRANSACTIONS,
     public static final String DB_NAME = "data.db";
-    //    USERS
+  
     public static final int VERSION_NUM = 6;
+  
     public static final String USERS = "USERS";
     public static final String FNAME = "FIRST_NAME";
     public static final String LNAME = "LAST_NAME";
@@ -43,8 +55,8 @@ public class Database extends SQLiteOpenHelper {
             + " Float not null);";
 
     public static final String TRANS_CREATE = "create table "
-            + TRANSACTIONS + "(" + EMAIL + " text not null, "
-            + COST + " text not null);";
+        + TRANSACTIONS + "(" + COST + " text not null, " + EMAIL + " text not null);";
+
 
     public Database(Context ctx){
         super(ctx, DB_NAME, null, VERSION_NUM);

@@ -1,12 +1,16 @@
 package com.example.bread;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,8 +32,33 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
+/**
+ *This is a overview page of your spending habits. There is a graph at the top half of the page
+ * showing the user, their current spending. The bottom half of the screen has an ListView of all your
+ * transactions, an EditText to input your transaction spend (E.x. $4.20), two buttons to add and delete transactions
+ * which is added and deleted in the database.
+ * @author Luke Krete
+ * @author Prayrit Khanna
+ * @author Noah Nichols
+ * @version 2019.12
+ */
 public class account extends AppCompatActivity {
     protected static final String ACTIVITY_NAME = "Account";
+    static final String GET_TRANSACTIONS = "SELECT COST FROM TRANSACTIONS";
+    final ArrayList<String> trans = new ArrayList<>();
+
+    static SQLiteDatabase database;
+    Cursor cursor;
+
+    //FrameLayout frameLayout;
+    //TransFragment fragment;
+    //FragmentTransaction fragmentTransaction;
+
+    /**
+     * Start the account activity, where you fill in the listView with your transactions. This will be updated in the
+     * database.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,8 +68,20 @@ public class account extends AppCompatActivity {
         final Button buttonDel = findViewById(R.id.btnDel);
         final ListView lstTrans = findViewById(R.id.listview_transactions);
         final EditText edtText = findViewById(R.id.editText);
-        final ArrayList<String> trans = new ArrayList<>();
 
+        Database dbHelper = new Database(this);
+        database = dbHelper.getWritableDatabase();
+        //System.out.println("HERE");
+        cursor = database.rawQuery(GET_TRANSACTIONS,null);
+        cursor.moveToFirst();
+        while(!cursor.isAfterLast()){
+            Log.i(ACTIVITY_NAME,"VALUE: "+ cursor.getString(cursor.getColumnIndex(Database.COST)));
+            trans.add(cursor.getString(cursor.getColumnIndex(Database.COST)));
+            cursor.moveToNext();
+        }
+        /**
+         *TransAdapter interacts with the ListView to check if there are any changes in the ListView.
+         */
         class TransAdapter extends ArrayAdapter {
             public TransAdapter(Context ctx){super(ctx,0);}
             public int getCount(){return trans.size();}
@@ -53,9 +95,14 @@ public class account extends AppCompatActivity {
             }
         }
         final TransAdapter transAdapter = new TransAdapter(this);
-        lstTrans.setAdapter(transAdapter);
+        /**
+         * Once you click this button, you add your transaction to the listView, which will be added to the database.
+         */
         buttonAdd.setOnClickListener((new View.OnClickListener() {
             @Override
+            /**
+             *
+             */
             public void onClick(View v) {
                 String value = edtText.getText().toString();
                 try{
@@ -65,6 +112,10 @@ public class account extends AppCompatActivity {
                         value = value +  ".00";
                     }
                     trans.add(value);
+                    ContentValues cValues = new ContentValues();
+                    cValues.put(Database.COST,value);
+                    cValues.put(Database.EMAIL,"test");
+                    database.insert(Database.TRANSACTIONS,"NullPlaceHolder",cValues);
                     transAdapter.notifyDataSetChanged();
                 }catch(Exception e){
                     android.app.AlertDialog.Builder builder = new AlertDialog.Builder(account.this);
@@ -85,12 +136,17 @@ public class account extends AppCompatActivity {
                 edtText.setText("");
             }
         }));
+        /**
+         *This will delete the selected transaction from the listView, and the database.
+         */
         buttonDel.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String value = edtText.getText().toString();
+                //System.out.println(value);
                 int index = trans.indexOf(value);
                 try {
+                    database.delete(Database.TRANSACTIONS,Database.COST+"="+value,null);
                     trans.remove(index);
                     transAdapter.notifyDataSetChanged();
                 }catch(Exception e){
@@ -100,10 +156,11 @@ public class account extends AppCompatActivity {
                 }
                 //trans.add(value);
                 edtText.setText("");
-
             }
         }));
-
+        /**
+         *
+         */
         lstTrans.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -115,13 +172,25 @@ public class account extends AppCompatActivity {
                 Snackbar.make(view,text,duration).setAction("Reaction",null).show();
             }
         });
+        lstTrans.setAdapter(transAdapter);
+
     }
 
+    /**
+     *This inflates our toolbar menu which contains our buttons to move to other screens
+     * @param m
+     * @return
+     */
     public boolean onCreateOptionsMenu(Menu m) {
         getMenuInflater().inflate(R.menu.account_summary_toolbar_menu, m);
         return true;
     }
 
+    /**
+     * This is our options in our menu. This is where we set our cases to move from one activity, to another.
+     * @param mi
+     * @return
+     */
     public boolean onOptionsItemSelected(MenuItem mi) {
         switch (mi.getItemId()) {
             case R.id.homepage:
@@ -168,6 +237,7 @@ public class account extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        database.close();
         Log.i(ACTIVITY_NAME, "In onDestroy()");
     }
 }
