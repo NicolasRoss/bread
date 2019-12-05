@@ -37,6 +37,10 @@ import java.util.ArrayList;
  * showing the user, their current spending. The bottom half of the screen has an ListView of all your
  * transactions, an EditText to input your transaction spend (E.x. $4.20), two buttons to add and delete transactions
  * which is added and deleted in the database.
+ * @author Luke Krete
+ * @author Prayrit Khanna
+ * @author Noah Nichols
+ * @version 2019.12
  */
 public class account extends AppCompatActivity {
     protected static final String ACTIVITY_NAME = "Account";

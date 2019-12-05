@@ -18,6 +18,11 @@ import java.util.List;
 import java.util.Random;
 
 /**
+ *This activity creates three graphs that shows the stocks for popular stocks on NASDAQ.
+ *The data for the stocks gets generated randomly through our generateData function.
+ *The data is saved to Database which holds Stock_Id and stock_value.
+ * @author Noah Nichols
+ * @version 2019.12
  *
  */
 public class stonks extends AppCompatActivity {
@@ -25,6 +30,11 @@ public class stonks extends AppCompatActivity {
     static final String GET_STOCK_DATA = "SELECT STOCK_NAME, STOCK_VALUE FROM STOCKS";
     static final String ACTIVITY_NAME = "STOCKS";
 
+    /**
+     * This is setting the stonks activity. We generate three different graphs that show the three most popular
+     * NASDAQ stocks.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,7 +42,7 @@ public class stonks extends AppCompatActivity {
 
         Database dbHelper = new Database(this);
         db = dbHelper.getWritableDatabase();
-//        generateData();
+        generateData();
         final Cursor cursor = db.rawQuery(GET_STOCK_DATA, null);
         cursor.moveToFirst();
         ArrayList<Float> data1 = new ArrayList<Float>();
@@ -150,6 +160,10 @@ public class stonks extends AppCompatActivity {
 
 
     }
+
+    /**
+     * This is randomly generating data for our Stock graphs. This is a helper function.
+     */
     public void generateData(){
         Random rd = new Random();
         for(int i = 0; i < 3; i++) {
@@ -164,6 +178,11 @@ public class stonks extends AppCompatActivity {
         }
     }
 
+    /**
+     * This function is where we generate our graphs based on the data, and our Line Chart.
+     * @param data1
+     * @param chart1
+     */
     public void generateGraph(ArrayList<Float> data1, LineChart chart1){
         List<Entry> entries1 = new ArrayList<Entry>();
 

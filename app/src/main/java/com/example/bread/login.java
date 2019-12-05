@@ -30,6 +30,11 @@ import java.util.regex.Pattern;
  * a toast will come up saying your account has been added to the app. If you missed a field, or wrote your email incorrectly,
  * then a toast will return a message saying a field was not filed in correctly.
  * This is the database table we iterate over to check in the login field.
+ * {@link NewUser}
+ * @author Nick Ross
+ * @author Prayrit Khanna
+ * @version 2019.12
+ *
  *
  */
 public class login extends AppCompatActivity {

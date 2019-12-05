@@ -35,6 +35,9 @@ import java.util.ArrayList;
  * The other 3 buttons, are gateways to our other Activities and one button is our settings button that will
  * show the app information.
  * The TextView shows the current User's balance.
+ * {@link account}
+ * {@link stonks}
+ * {@link login}
  */
 public class MainActivity extends AppCompatActivity {
     protected static final String ACTIVITY_NAME = "MainActivity";

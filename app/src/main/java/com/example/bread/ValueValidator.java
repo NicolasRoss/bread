@@ -1,7 +1,9 @@
 package com.example.bread;
 
 /**
- * This is used for our JUnitTesting to validate transaction inuputs. They must be float/int values. 
+ * This is used for our JUnitTesting to validate transaction inuputs. They must be float/int values.
+ * @Author Nick Ross
+ * @version 2019.12
  */
 public class ValueValidator {
     private boolean isValid = false;

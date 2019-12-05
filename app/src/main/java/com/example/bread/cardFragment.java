@@ -16,14 +16,27 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+/**
+ * This activity grabs the users information from our Fragment window and is adding it to our Database.
+ * This function is used to add card numbers for each user so they can manage multiple cards.
+ * Each user will be able to add and delete debit/credit cards from their account depending on what the user wants to manage.
+ * @author Nick Ross
+ * @version 2019.12
+ */
 public class cardFragment extends Fragment {
-
     MainActivity cards;
 
     public cardFragment(MainActivity cards) {
         this.cards = cards;
     }
 
+    /**
+     * This inflates the Fragment window for the user to input user's information.
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

@@ -15,6 +15,8 @@ import java.util.regex.Pattern;
 
 /**
  * This is creating a newUser in the database. This asks for first name, last name, email, password.
+ * @author Prayrit Khanna
+ * @version 2019.12
  */
 public class NewUser extends AppCompatActivity {
     protected static final String ACTIVITY_NAME = "NewUser";
