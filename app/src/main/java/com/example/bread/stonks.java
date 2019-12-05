@@ -176,17 +176,6 @@ public class stonks extends AppCompatActivity {
                 //do nothing
                 break;
 
-            case R.id.account_summary:
-                // do Nothing
-
-                break;
-
-            case R.id.budget:
-                Log.d("budget", "Option 2 selected");
-                // go to budget layout
-                //Intent intent = new Intent(this, .class);
-                //startActivity(intent);
-                break;
 
             case R.id.stocks:
 //                Log.d("stonks", "Option 3 selected");
