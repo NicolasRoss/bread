@@ -33,4 +33,14 @@
         android:layout_height="wrap_content"
         android:text="@string/delete_message" />
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="22dp"
+        android:visibility="invisible" />
+
+
 </LinearLayout>

@@ -16,7 +16,7 @@
         android:layout_marginEnd="60dp"
         android:layout_marginBottom="10dp"
         android:gravity="center"
-        android:text="$42,690.69"
+        android:text="$0.00"
         android:textColor="#4CAF50"
         android:textSize="50sp"
         app:layout_constraintBottom_toTopOf="@+id/card_view"
@@ -34,13 +34,13 @@
         android:layout_marginEnd="15dp"
         android:layout_marginBottom="15dp"
         app:layout_constraintBottom_toTopOf="@+id/stocks"
-        app:layout_constraintEnd_toStartOf="@+id/budget"
+        app:layout_constraintEnd_toStartOf="@+id/about"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/baseline_account_balance_wallet_black_48dp" />
 
     <ImageButton
-        android:id="@+id/budget"
+        android:id="@+id/about"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginStart="15dp"
@@ -51,7 +51,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/account"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/baseline_today_black_48dp" />
+        app:srcCompat="@drawable/baseline_info_black_48dp" />
 
     <ImageButton
         android:id="@+id/stocks"
@@ -79,7 +79,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/stocks"
-        app:layout_constraintTop_toBottomOf="@+id/budget"
+        app:layout_constraintTop_toBottomOf="@+id/about"
         app:srcCompat="@drawable/baseline_exit_to_app_black_48dp" />
 
     <Button
@@ -111,5 +111,16 @@
         app:layout_constraintHorizontal_bias="0.555"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/balance" />
+
+    <ProgressBar
+        android:layout_height="wrap_content"
+        android:layout_width="200dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="22dp"
+        android:id="@+id/progressBar"
+        app:layout_constraintTop_toBottomOf="@+id/card_view"
+        android:visibility="invisible"
+        style="?android:attr/progressBarStyleHorizontal"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
