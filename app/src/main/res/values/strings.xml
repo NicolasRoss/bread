@@ -15,4 +15,11 @@
     <string name="ok">Ok</string>
     <string name="delete_message">Delete</string>
     <string name="card_num">Card Number</string>
+    <string name="snack_bar_text">Card already exists.</string>
+    <string name="snack_bar_delete">DELETE?</string>
+    <string name="close">Close</string>
+    <string name="about">Activity Version is: 1.0.\n
+        Authors: Noah Nichols, Nicolas Ross, Prayrit Khanna, Luke Krete.\n
+        How-To Use The App: first create an account or just log in with a default email. Users can add bank cards to their account on the main page, manage whose cards they are, how much their recent transactions have spent will be displayed above. You can also form the main page see graphs of popular stocks, as well as add transactions to your account, and are then given a graph of your recent spendings. Other functional are the help button, and logging out.
+    </string>
 </resources>

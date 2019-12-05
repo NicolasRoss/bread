@@ -118,7 +118,7 @@ public class account extends AppCompatActivity {
     }
 
     public boolean onCreateOptionsMenu(Menu m) {
-        getMenuInflater().inflate(R.menu.main_toolbar_menu, m);
+        getMenuInflater().inflate(R.menu.account_summary_toolbar_menu, m);
         return true;
     }
 
@@ -131,31 +131,11 @@ public class account extends AppCompatActivity {
                 //do nothing
                 break;
 
-            case R.id.account_summary:
-                // do Nothing
-
-                break;
-
-            case R.id.budget:
-                Log.d("budget", "Option 2 selected");
-                // go to budget layout
-                //Intent intent = new Intent(this, .class);
-                //startActivity(intent);
-                break;
-
             case R.id.stocks:
                 Log.d("stonks", "Option 3 selected");
                 // go to stocks layout
                 Intent intentStocks = new Intent(this, stonks.class);
                 startActivity(intentStocks);
-                break;
-
-            case R.id.action_about:
-                Log.d("Toolbar", "Option 4 selected");
-                CharSequence text = "Version 1.0, by Nicolas Ross";
-                int duration = Toast.LENGTH_LONG;
-                Toast toast = Toast.makeText(getApplicationContext(), text, duration);
-                toast.show();
                 break;
         }
         return true;
