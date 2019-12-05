@@ -5,42 +5,59 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+/**
+ * Let's get this Bread
+ * Creating and generating our database. It consists of 4 tables, BANK_CARDS, USERS, STOCKS, TRANSACTIONS.
+ * The BANK_CARDS table's columns are as follows: BANK_CARDS, EMAIL, CARD_NUM, FNAME, LNAME
+ * The USERS table's columns are as follows: EMAIL, FNAME, LNAME, PW (PASSWORD)
+ * The STOCKS table's columns are as follows: STOCK_NAME, STOCK_VALUE
+ * The TRANSACTION table's collumns are as follows: COST, EMAIL.
+ * The Id for all the tables are EMAIL.
+ * @author Noah Nichols
+ * @version 2019.12
+ */
 public class Database extends SQLiteOpenHelper {
 
-//    TABLES ARE: USERS, BANK_CARDS, STOCKS, TRANSACTIONS,
+    //    TABLES ARE: USERS, BANK_CARDS, STOCKS, TRANSACTIONS,
     public static final String DB_NAME = "data.db";
+
+
 //    USERS
-    public static final int VERSION_NUM = 1;
+    public static final int VERSION_NUM = 7;
+
     public static final String USERS = "USERS";
-    public static final String USER_ID = "USER_ID";
     public static final String FNAME = "FIRST_NAME";
     public static final String LNAME = "LAST_NAME";
     public static final String EMAIL = "EMAIL";
     public static final String PW = "PASSWORD";
-//    BANK_CARDS
+    //    BANK_CARDS
     public static final String BANK_CARDS = "BANK_CARDS";
     public static final String CARD_NUM = "CARD_NUMBER";
-//    STOCKS
+    //    STOCKS
     public static final String STOCKS = "STOCKS";
     public static final String STOCK_NAME = "STOCK_NAME";
     public static final String STOCK_VALUE = "STOCK_VALUE";
+    public static final String COST = "COST";
+    public static final String TRANSACTIONS = "TRANSACTIONS";
 
 
-//    CREATE QUERIES
+    //    CREATE QUERIES
 //    USERS
     public static final String USER_CREATE = "create table "
-            + USERS + "(" + USER_ID + " integer primary key autoincrement, "+ FNAME
-            + " text not null, " + LNAME + " text not null, " + EMAIL + " text not null, "
+            + USERS + "(" + EMAIL + " text not null, "+ FNAME
+            + " text not null, " + LNAME + " text not null, "
             + PW + " text not null);";
-//    BANK_CARDS
+    //    BANK_CARDS
     public static final String BANK_CARD_CREATE = "create table "
-            + BANK_CARDS + "(" + USER_ID + "integer primary key, " + CARD_NUM + " integer not null, " + FNAME
+            + BANK_CARDS + "(" + CARD_NUM + " text not null, " + FNAME
             + " text not null, " + LNAME + " text not null);";
-//    STOCKS
+    //    STOCKS
     public static final String STOCK_CREATE = "create table "
-            + STOCKS + "(" + STOCK_NAME + " text primary key, " + STOCK_VALUE
+            + STOCKS + "(" + STOCK_NAME + " text not null, " + STOCK_VALUE
             + " Float not null);";
 
+    public static final String TRANS_CREATE = "create table "
+        + TRANSACTIONS + "(" + COST + " text not null, " + EMAIL + " text not null);";
 
 
     public Database(Context ctx){
@@ -55,6 +72,8 @@ public class Database extends SQLiteOpenHelper {
         db.execSQL(BANK_CARD_CREATE);
         Log.i("Database", "creating STOCKS");
         db.execSQL(STOCK_CREATE);
+        Log.i("Database", "creating TRANSACTIONS");
+        db.execSQL(TRANS_CREATE);
 
     }
 
@@ -63,10 +82,11 @@ public class Database extends SQLiteOpenHelper {
         final String userQuery = "DROP TABLE IF EXISTS " + USERS;
         final String bcQuery = "DROP TABLE IF EXISTS " + BANK_CARDS;
         final String stockQuery = "DROP TABLE IF EXISTS " + STOCKS;
-//        final String query = "DROP TABLE IF EXISTS " + USERS;
+        final String transQuery = "DROP TABLE IF EXISTS " +TRANSACTIONS;
         db.execSQL(userQuery);
         db.execSQL(bcQuery);
         db.execSQL(stockQuery);
+        db.execSQL(transQuery);
         onCreate(db);
     }
 

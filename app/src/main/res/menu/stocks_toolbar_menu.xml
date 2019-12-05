@@ -16,22 +16,10 @@
         android:title="@string/AccountSummaryToolbar"/>
 
     <item
-        android:id="@+id/budget"
-        app:showAsAction="always"
-        android:orderInCategory="103"
-        android:icon="@drawable/baseline_today_black_18dp"
-        android:title="@string/BudgetToolbar"/>
-
-    <item
         android:id="@+id/stocks"
         app:showAsAction="always"
         android:orderInCategory="104"
         android:icon="@drawable/baseline_trending_up_white_18dp"
         android:title="@string/StocksToolbar"/>
 
-    <item
-        android:id="@+id/action_about"
-        app:showAsAction="never"
-        android:orderInCategory="105"
-        android:title="AboutToolbar"/>
 </menu>
