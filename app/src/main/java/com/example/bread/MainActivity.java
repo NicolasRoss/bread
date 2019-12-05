@@ -120,8 +120,13 @@ public class MainActivity extends AppCompatActivity {
         balance = findViewById(R.id.balance);
         for (String x : costs) {
             DecimalFormat decimalFormat = new DecimalFormat("#.00");
-            String numberAsString = decimalFormat.format(x);
-            balance.setText("$" + numberAsString);
+            try {
+                String numberAsString = decimalFormat.format(x);
+                balance.setText("$" + numberAsString);
+            } catch (Exception e) {
+                Log.i(ACTIVITY_NAME, "No data.");
+
+            }
         }
 
         cardView = findViewById(R.id.card_view);

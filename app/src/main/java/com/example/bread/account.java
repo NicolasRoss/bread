@@ -239,7 +239,7 @@ public class account extends AppCompatActivity {
 
                 Intent intent = new Intent(account.this, transDetails.class);
                 intent.putExtras(arguments);
-                startActivityForResult(intent, 10);
+                startActivity(intent);
 
                 //int duration = Snackbar.LENGTH_LONG;
                 //Toast toast = Toast.makeText(getApplicationContext(), text, duration);
@@ -351,18 +351,7 @@ public class account extends AppCompatActivity {
         database.close();
         Log.i(ACTIVITY_NAME, "In onDestroy()");
     }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK){
-            String row = data.getStringExtra("row");
-            Log.i("delete row: ", ""+row);
-            database.delete(Database.TRANSACTIONS,Database.COST+ "="+row,null);
-            trans.remove(row);
-            transAdapter.notifyDataSetChanged();
-        }
 
-    }
     void deleteRow(String row){
         FragmentManager fragmentManager = getSupportFragmentManager();
         database.delete(Database.TRANSACTIONS,Database.COST+ "="+ row,null);

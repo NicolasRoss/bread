@@ -36,13 +36,8 @@ public class transFragment extends Fragment {
             public void onClick(View view) {
                 if (account == null) {
                     Log.d("Wrong place", "onClick: ");
-                    Intent data = new Intent();
-                    String row = costV.getText().toString();
-                    data.putExtra("row", row);
-                    getActivity().setResult(Activity.RESULT_OK, data);
-                    getActivity().finish();
-                } else {
-                    account.deleteRow(cost);
+                    Intent intent = new Intent(getContext(), account.class);
+                    startActivity(intent);
                 }
             }
         });

@@ -105,9 +105,9 @@ public class stonks extends AppCompatActivity {
 
 
 //        Float[] data = new Float[] {1.0F,2.0F,3.0F,4.0F,5.0F,6.0F,6.0F, 6.0F, 6.0F, 6.0F, 6.0F, 5.0F, 4.0F, 5.0F, 7.0F, 10.0F, 6.0F,1.0F,2.0F,3.0F,4.0F,5.0F,6.0F,6.0F, 6.0F, 6.0F, 6.0F, 6.0F, 5.0F, 4.0F, 5.0F, 7.0F, 10.0F, 6.0F};
-        LineChart chart1 =  findViewById(R.id.chart1);
-        LineChart chart2 =  findViewById(R.id.chart2);
-        LineChart chart3 =  findViewById(R.id.chart3);
+        LineChart chart1 =  findViewById(R.id.stock1);
+        LineChart chart2 =  findViewById(R.id.stock2);
+        LineChart chart3 =  findViewById(R.id.stock3);
 
 //        WE NEED TO QUERY DATA BASED ON BUTTON LISTENERS, DEFAULT WILL BE 1W
 
@@ -219,9 +219,9 @@ public class stonks extends AppCompatActivity {
      * @param data1
      * @param chart1
      */
-    public void generateGraph(ArrayList<Float> data1, LineChart chart1){
+    public void generateGraph(ArrayList<Float> data1, LineChart chart1) {
         List<Entry> entries1 = new ArrayList<Entry>();
-
+    }
 
     public boolean onOptionsItemSelected(MenuItem mi) {
         switch (mi.getItemId()) {
