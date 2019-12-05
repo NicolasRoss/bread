@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,6 +20,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.example.bread.account.database;
 
 /**
  * The login window is the first window in our application.
@@ -71,9 +74,9 @@ public class login extends AppCompatActivity {
         Log.i(ACTIVITY_NAME, "In onCreate()");
         final SharedPreferences sharedPref = getSharedPreferences("DefaultEmail", Context.MODE_PRIVATE);
         String email =sharedPref.getString("DefaultEmail", "email@domain.com");
-        final EditText email_field = (EditText) findViewById(R.id.email_txt);
+        final EditText email_field = findViewById(R.id.email_txt);
+        final EditText password_field = findViewById(R.id.password_txt);
         email_field.setText(email);
-
         Button login = (Button) findViewById(R.id.login_btn);
         login.setOnClickListener((new View.OnClickListener() {
             @Override
@@ -81,14 +84,17 @@ public class login extends AppCompatActivity {
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putString("DefaultEmail", email_field.getText().toString());
                 editor.commit();
-
+                String real_email = email_field.getText().toString();
+                Database dbHelper = new Database(login.this);
+                database = dbHelper.getReadableDatabase();
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 Log.d("My_tag", intent.toString());
                 startActivityForResult(intent, 10);
-    }
-}));
+            }
+        }));
 
-        Button logincreateaccount_btn = (Button) findViewById(R.id.newuser_btn);
+
+        Button logincreateaccount_btn = findViewById(R.id.newuser_btn);
         logincreateaccount_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -117,9 +123,8 @@ public class login extends AppCompatActivity {
 
                                 boolean emailIsValid = checkEmailForValidity(emails);
                                 if (emailIsValid == true && !fnames.equals("") && !lnames.equals("") && !pass.equals("")){
-                                    CharSequence toasttext = "Your account have been created";
                                     int duration = Toast.LENGTH_SHORT;
-                                    Toast createaccount_toast = Toast.makeText(getApplicationContext(), toasttext, duration);
+                                    Toast createaccount_toast = Toast.makeText(getApplicationContext(), R.string.successful_toast, duration);
                                     createaccount_toast.show();
                                     ContentValues content = new ContentValues();
                                     content.put(Database.EMAIL, emails);
@@ -129,9 +134,8 @@ public class login extends AppCompatActivity {
                                     db.insert(Database.USERS, "nullPlaceHolder", content);
                                 }
                                 else{
-                                    CharSequence toasttext = "An entry has not been filled properly. Please go back and check your entries and ensure you are filling everything in properly";
                                     int duration = Toast.LENGTH_LONG;
-                                    Toast createaccount_toast = Toast.makeText(getApplicationContext(), toasttext, duration);
+                                    Toast createaccount_toast = Toast.makeText(getApplicationContext(), R.string.unsuccessful_toast, duration);
                                     createaccount_toast.show();
                                 }
                             }
@@ -148,7 +152,6 @@ public class login extends AppCompatActivity {
     }
 
     /**
-     *
      * @param requestCode
      * @param responseCode
      * @param data
@@ -162,8 +165,7 @@ public class login extends AppCompatActivity {
         }
 
         if(responseCode == Activity.RESULT_OK) {
-            CharSequence text = ("Logout successful.") ;
-            Toast toast = Toast.makeText(getApplicationContext(),text, Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(getApplicationContext(),R.string.Logout_successful, Toast.LENGTH_LONG);
             toast.show();
         }
     }

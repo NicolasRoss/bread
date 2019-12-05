@@ -60,6 +60,7 @@ public class account extends AppCompatActivity {
     static SQLiteDatabase database;
     Cursor cursor;
 
+
     //FrameLayout frameLayout;
     //TransFragment fragment;
     //FragmentTransaction fragmentTransaction;
@@ -104,6 +105,8 @@ public class account extends AppCompatActivity {
 
         Database dbHelper = new Database(this);
         database = dbHelper.getWritableDatabase();
+
+
         //System.out.println("HERE");
         dataQuery q1 = new dataQuery();
         q1.execute(GET_TRANSACTIONS);
@@ -183,12 +186,12 @@ public class account extends AppCompatActivity {
                     android.app.AlertDialog.Builder builder = new AlertDialog.Builder(account.this);
                     builder.setMessage("Input Error, please enter a valid float value.")
                             .setTitle("Input Error")
-                            .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                     // User clicked OK button
                                 }
                             })
-                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                     // User cancelled the dialog
                                 }
