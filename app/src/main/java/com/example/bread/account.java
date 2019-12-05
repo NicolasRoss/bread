@@ -37,6 +37,16 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 
+/**
+ *This is a overview page of your spending habits. There is a graph at the top half of the page
+ * showing the user, their current spending. The bottom half of the screen has an ListView of all your
+ * transactions, an EditText to input your transaction spend (E.x. $4.20), two buttons to add and delete transactions
+ * which is added and deleted in the database.
+ * @author Luke Krete
+ * @author Prayrit Khanna
+ * @author Noah Nichols
+ * @version 2019.12
+ */
 public class account extends AppCompatActivity {
     transFragment fragment;
     FragmentTransaction ft;
@@ -53,6 +63,7 @@ public class account extends AppCompatActivity {
     //FrameLayout frameLayout;
     //TransFragment fragment;
     //FragmentTransaction fragmentTransaction;
+
     protected class dataQuery extends AsyncTask<String, Integer, ArrayList<String>> {
         @Override
         protected ArrayList<String> doInBackground(String... strings) {
@@ -69,6 +80,14 @@ public class account extends AppCompatActivity {
             return newTrans;
         }
     }
+
+
+    /**
+     * Start the account activity, where you fill in the listView with your transactions. This will be updated in the
+     * database.
+     * @param savedInstanceState
+     */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,8 +114,33 @@ public class account extends AppCompatActivity {
         }
 
 
+
+
+        /**
+         *TransAdapter interacts with the ListView to check if there are any changes in the ListView.
+         */
+        class TransAdapter extends ArrayAdapter {
+            public TransAdapter(Context ctx){super(ctx,0);}
+            public int getCount(){return trans.size();}
+            public String getItem(int position){return trans.get(position);}
+            public View getView(int position, View convertView, ViewGroup parent){
+                LayoutInflater inflater = account.this.getLayoutInflater();
+                View result = inflater.inflate(R.layout.add_trans,null);
+                TextView message = result.findViewById(R.id.transaction);
+                message.setText(getItem(position));
+                return result;
+            }
+        }
+        final TransAdapter transAdapter = new TransAdapter(this);
+        /**
+         * Once you click this button, you add your transaction to the listView, which will be added to the database.
+         */
+
         buttonAdd.setOnClickListener((new View.OnClickListener() {
             @Override
+            /**
+             *
+             */
             public void onClick(View v) {
                 String value = edtText.getText().toString();
                 try{
@@ -154,6 +198,9 @@ public class account extends AppCompatActivity {
                 edtText.setText("");
             }
         }));
+        /**
+         *This will delete the selected transaction from the listView, and the database.
+         */
         buttonDel.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -171,9 +218,13 @@ public class account extends AppCompatActivity {
                 }
                 //trans.add(value);
                 edtText.setText("");
-
             }
         }));
+
+        /**
+         *
+         */
+
         lstTrans.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -228,13 +279,26 @@ public class account extends AppCompatActivity {
             message.setText(getItem(position));
             return result;
 
+
         }
     }
+
+    /**
+     *This inflates our toolbar menu which contains our buttons to move to other screens
+     * @param m
+     * @return
+     */
+
     public boolean onCreateOptionsMenu(Menu m) {
-        getMenuInflater().inflate(R.menu.main_toolbar_menu, m);
+        getMenuInflater().inflate(R.menu.account_summary_toolbar_menu, m);
         return true;
     }
 
+    /**
+     * This is our options in our menu. This is where we set our cases to move from one activity, to another.
+     * @param mi
+     * @return
+     */
     public boolean onOptionsItemSelected(MenuItem mi) {
         switch (mi.getItemId()) {
             case R.id.homepage:
@@ -244,31 +308,11 @@ public class account extends AppCompatActivity {
                 //do nothing
                 break;
 
-            case R.id.account_summary:
-                // do Nothing
-
-                break;
-
-            case R.id.budget:
-                Log.d("budget", "Option 2 selected");
-                // go to budget layout
-                //Intent intent = new Intent(this, .class);
-                //startActivity(intent);
-                break;
-
             case R.id.stocks:
                 Log.d("stonks", "Option 3 selected");
                 // go to stocks layout
                 Intent intentStocks = new Intent(this, stonks.class);
                 startActivity(intentStocks);
-                break;
-
-            case R.id.action_about:
-                Log.d("Toolbar", "Option 4 selected");
-                CharSequence text = "Version 1.0, by Nicolas Ross";
-                int duration = Toast.LENGTH_LONG;
-                Toast toast = Toast.makeText(getApplicationContext(), text, duration);
-                toast.show();
                 break;
         }
         return true;
