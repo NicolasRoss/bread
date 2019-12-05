@@ -5,14 +5,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Adapter;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -29,7 +32,29 @@ public class stonks extends AppCompatActivity {
     static SQLiteDatabase db;
     static final String GET_STOCK_DATA = "SELECT STOCK_NAME, STOCK_VALUE FROM STOCKS";
     static final String ACTIVITY_NAME = "STOCKS";
+    protected class dataQuery extends AsyncTask<String, Integer, ArrayList<Float>> {
 
+        @Override
+        protected ArrayList<Float> doInBackground(String... strings) {
+            Log.i(ACTIVITY_NAME, "Started async");
+            String graphNum = strings[0];
+            ArrayList<Float> newGraph = new ArrayList<Float>();
+            final Cursor cursor = db.rawQuery(GET_STOCK_DATA, null);
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                Log.i(ACTIVITY_NAME, "SQL NAME:" + cursor.getString(cursor.getColumnIndex(Database.STOCK_NAME)));
+                Log.i(ACTIVITY_NAME, "SQL VALUE:" + cursor.getFloat(cursor.getColumnIndex(Database.STOCK_VALUE)));
+                if (cursor.getString(cursor.getColumnIndex(Database.STOCK_NAME)).equals(graphNum)) {
+                    newGraph.add(cursor.getFloat(cursor.getColumnIndex(Database.STOCK_VALUE)));
+
+                }
+                cursor.moveToNext();
+                Log.i(ACTIVITY_NAME, "Finished async");
+            }
+
+            return newGraph;
+        }
+    }
     /**
      * This is setting the stonks activity. We generate three different graphs that show the three most popular
      * NASDAQ stocks.
@@ -42,28 +67,27 @@ public class stonks extends AppCompatActivity {
 
         Database dbHelper = new Database(this);
         db = dbHelper.getWritableDatabase();
-        generateData();
-        final Cursor cursor = db.rawQuery(GET_STOCK_DATA, null);
-        cursor.moveToFirst();
+//        generateData();
+
         ArrayList<Float> data1 = new ArrayList<Float>();
         ArrayList<Float> data2 = new ArrayList<Float>();
         ArrayList<Float> data3 = new ArrayList<Float>();
+//        dataQuery g1Query = new dataQuery();
+//        dataQuery g2Query = new dataQuery();
+//        dataQuery g3Query = new dataQuery();
 
+//        g1Query.execute("0");
+//        g2Query.execute("1");
+//        g3Query.execute("2");
 
-        while(!cursor.isAfterLast()){
-            Log.i(ACTIVITY_NAME, "SQL NAME:" + cursor.getString(cursor.getColumnIndex(Database.STOCK_NAME)));
-            Log.i(ACTIVITY_NAME, "SQL VALUE:" + cursor.getFloat(cursor.getColumnIndex(Database.STOCK_VALUE)));
-            if(cursor.getString(cursor.getColumnIndex(Database.STOCK_NAME)).equals("0")){
-                data1.add(cursor.getFloat(cursor.getColumnIndex(Database.STOCK_VALUE)));
-            }else if(cursor.getString(cursor.getColumnIndex(Database.STOCK_NAME)).equals("1")){
-                data2.add(cursor.getFloat(cursor.getColumnIndex(Database.STOCK_VALUE)));
-            }else if(cursor.getString(cursor.getColumnIndex(Database.STOCK_NAME)).equals("2")){
-                data3.add(cursor.getFloat(cursor.getColumnIndex(Database.STOCK_VALUE)));
-
-            }
-
-            cursor.moveToNext();
+        try {
+            data1 = new dataQuery().execute("0").get();
+            data2 = new dataQuery().execute("1").get();
+            data3 = new dataQuery().execute("2").get();
+        }catch(Exception e){
+            Log.i(ACTIVITY_NAME, "Errored on loading the data");
         }
+
         Log.i(ACTIVITY_NAME, "READING ARRAYLISTS:");
         Log.i(ACTIVITY_NAME, data1.toString());
         Log.i(ACTIVITY_NAME, data2.toString());
@@ -167,7 +191,7 @@ public class stonks extends AppCompatActivity {
     public void generateData(){
         Random rd = new Random();
         for(int i = 0; i < 3; i++) {
-            for (int j = 0; j < 5; j++) {
+            for (int j = 0; j < 55; j++) {
                 ContentValues xValues = new ContentValues();
                 Float newValue = rd.nextFloat() * 100.0F * rd.nextFloat();
                 xValues.put(Database.STOCK_NAME, Integer.toString(i));
