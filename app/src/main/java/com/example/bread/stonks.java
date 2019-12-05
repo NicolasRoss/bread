@@ -6,26 +6,69 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import android.widget.Adapter;
+
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+
+/**
+ *This activity creates three graphs that shows the stocks for popular stocks on NASDAQ.
+ *The data for the stocks gets generated randomly through our generateData function.
+ *The data is saved to Database which holds Stock_Id and stock_value.
+ * @author Noah Nichols
+ * @version 2019.12
+ *
+ */
 
 public class stonks extends AppCompatActivity {
     static SQLiteDatabase db;
     static final String GET_STOCK_DATA = "SELECT STOCK_NAME, STOCK_VALUE FROM STOCKS";
     static final String ACTIVITY_NAME = "STOCKS";
+    protected class dataQuery extends AsyncTask<String, Integer, ArrayList<Float>> {
 
+        @Override
+        protected ArrayList<Float> doInBackground(String... strings) {
+            Log.i(ACTIVITY_NAME, "Started async");
+            String graphNum = strings[0];
+            ArrayList<Float> newGraph = new ArrayList<Float>();
+            final Cursor cursor = db.rawQuery(GET_STOCK_DATA, null);
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                Log.i(ACTIVITY_NAME, "SQL NAME:" + cursor.getString(cursor.getColumnIndex(Database.STOCK_NAME)));
+                Log.i(ACTIVITY_NAME, "SQL VALUE:" + cursor.getFloat(cursor.getColumnIndex(Database.STOCK_VALUE)));
+                if (cursor.getString(cursor.getColumnIndex(Database.STOCK_NAME)).equals(graphNum)) {
+                    newGraph.add(cursor.getFloat(cursor.getColumnIndex(Database.STOCK_VALUE)));
+
+                }
+                cursor.moveToNext();
+                Log.i(ACTIVITY_NAME, "Finished async");
+            }
+
+            return newGraph;
+        }
+    }
+    /**
+     * This is setting the stonks activity. We generate three different graphs that show the three most popular
+     * NASDAQ stocks.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,29 +76,28 @@ public class stonks extends AppCompatActivity {
 
         Database dbHelper = new Database(this);
         db = dbHelper.getWritableDatabase();
-        generateData();
-        final Cursor cursor = db.rawQuery(GET_STOCK_DATA, null);
-        System.out.println(cursor);
-        cursor.moveToFirst();
+
+//        generateData();
+
         ArrayList<Float> data1 = new ArrayList<Float>();
         ArrayList<Float> data2 = new ArrayList<Float>();
         ArrayList<Float> data3 = new ArrayList<Float>();
+//        dataQuery g1Query = new dataQuery();
+//        dataQuery g2Query = new dataQuery();
+//        dataQuery g3Query = new dataQuery();
 
+//        g1Query.execute("0");
+//        g2Query.execute("1");
+//        g3Query.execute("2");
 
-        while(!cursor.isAfterLast()){
-            Log.i(ACTIVITY_NAME, "SQL NAME:" + cursor.getString(cursor.getColumnIndex(Database.STOCK_NAME)));
-            Log.i(ACTIVITY_NAME, "SQL VALUE:" + cursor.getFloat(cursor.getColumnIndex(Database.STOCK_VALUE)));
-            if(cursor.getString(cursor.getColumnIndex(Database.STOCK_NAME)).equals("0")){
-                data1.add(cursor.getFloat(cursor.getColumnIndex(Database.STOCK_VALUE)));
-            }else if(cursor.getString(cursor.getColumnIndex(Database.STOCK_NAME)).equals("1")){
-                data2.add(cursor.getFloat(cursor.getColumnIndex(Database.STOCK_VALUE)));
-            }else if(cursor.getString(cursor.getColumnIndex(Database.STOCK_NAME)).equals("2")){
-                data3.add(cursor.getFloat(cursor.getColumnIndex(Database.STOCK_VALUE)));
-
-            }
-
-            cursor.moveToNext();
+        try {
+            data1 = new dataQuery().execute("0").get();
+            data2 = new dataQuery().execute("1").get();
+            data3 = new dataQuery().execute("2").get();
+        }catch(Exception e){
+            Log.i(ACTIVITY_NAME, "Errored on loading the data");
         }
+
         Log.i(ACTIVITY_NAME, "READING ARRAYLISTS:");
         Log.i(ACTIVITY_NAME, data1.toString());
         Log.i(ACTIVITY_NAME, data2.toString());
@@ -148,10 +190,14 @@ public class stonks extends AppCompatActivity {
 
 
     }
+
+    /**
+     * This is randomly generating data for our Stock graphs. This is a helper function.
+     */
     public void generateData(){
         Random rd = new Random();
         for(int i = 0; i < 3; i++) {
-            for (int j = 0; j < 5; j++) {
+            for (int j = 0; j < 55; j++) {
                 ContentValues xValues = new ContentValues();
                 Float newValue = rd.nextFloat() * 100.0F * rd.nextFloat();
                 xValues.put(Database.STOCK_NAME, Integer.toString(i));
@@ -162,10 +208,20 @@ public class stonks extends AppCompatActivity {
         }
     }
 
+
     public boolean onCreateOptionsMenu(Menu m) {
         getMenuInflater().inflate(R.menu.stocks_toolbar_menu, m);
         return true;
     }
+
+    /**
+     * This function is where we generate our graphs based on the data, and our Line Chart.
+     * @param data1
+     * @param chart1
+     */
+    public void generateGraph(ArrayList<Float> data1, LineChart chart1){
+        List<Entry> entries1 = new ArrayList<Entry>();
+
 
     public boolean onOptionsItemSelected(MenuItem mi) {
         switch (mi.getItemId()) {
@@ -184,12 +240,7 @@ public class stonks extends AppCompatActivity {
 //                startActivity(intentStocks);
                 break;
 
-            case R.id.action_about:
-                Log.d("Toolbar", "Option 4 selected");
-                int duration = Toast.LENGTH_LONG;
-                Toast toast = Toast.makeText(getApplicationContext(), R.string.authors, duration);
-                toast.show();
-                break;
+
         }
         return true;
     }

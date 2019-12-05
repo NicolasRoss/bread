@@ -13,6 +13,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,6 +28,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.snackbar.Snackbar;
+
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**
@@ -35,28 +39,59 @@ import java.util.ArrayList;
  * The other 3 buttons, are gateways to our other Activities and one button is our settings button that will
  * show the app information.
  * The TextView shows the current User's balance.
+ * {@link account}
+ * {@link stonks}
+ * {@link login}
  */
 public class MainActivity extends AppCompatActivity {
     protected static final String ACTIVITY_NAME = "MainActivity";
     static final String GET_CARDS = "SELECT CARD_NUMBER, FIRST_NAME, LAST_NAME FROM BANK_CARDS";
+    static final String GET_INFO = "SELECT FIRST_NAME, LAST_NAME FROM BANK_CARDS WHERE CARD_NUMBER=";
+    static final String GET_COSTS = "SELECT COST FROM TRANSACTIONS";
     static SQLiteDatabase database;
     Cursor cursor;
     cardFragment fragment;
     FragmentTransaction ft;
     ImageButton accButton;
     ImageButton logButton;
-    ImageButton budgButton;
+    ImageButton aboutButton;
     ImageButton stockButton;
     Button addcard;
     ListView cardView;
+    TextView balance;
     ArrayList<String> cards;
+    ArrayList<String> f;
+    ArrayList<String> l;
+    ArrayList<String> costs;
     CardAdapter cardAdapter;
+
+    protected class dataQuery extends AsyncTask<String, Integer, ArrayList<String>> {
+        @Override
+        protected ArrayList<String> doInBackground(String... strings) {
+            Log.i(ACTIVITY_NAME, "Started async");
+            String name = strings[0];
+            String query = strings[1];
+            ArrayList<String> newCards = new ArrayList<>();
+            final Cursor cursor = database.rawQuery(name, null);
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                Log.i(ACTIVITY_NAME, "Cursors column count =" + cursor.getColumnCount());
+
+                newCards.add(cursor.getString(cursor.getColumnIndex(query)));
+                cursor.moveToNext();
+            }
+
+            return newCards;
+        }
+    }
+
 
     /**
      * This opens the Activity on our application. Setting up the ListView by retreiving card information
      * from the Database.
      * @param savedInstanceState
      */
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,34 +100,55 @@ public class MainActivity extends AppCompatActivity {
         Log.i(ACTIVITY_NAME, "In onCreate()");
 
         cards = new ArrayList<>();
+        f = new ArrayList<>();
+        l = new ArrayList<>();
+        cardAdapter = new CardAdapter(this);
         Database dbHelper = new Database(this);
         database = dbHelper.getWritableDatabase();
-        cursor = database.rawQuery(GET_CARDS, null);
-        cursor.moveToFirst();
+        dataQuery q1 = new dataQuery();
+        dataQuery q2 = new dataQuery();
+        q1.execute(GET_CARDS, Database.CARD_NUM);
+        q2.execute(GET_COSTS, Database.COST);
 
-        while (!cursor.isAfterLast()) {
-            Log.i(ACTIVITY_NAME, "Cursors column count =" + cursor.getColumnCount());
-
-            cards.add(cursor.getString(cursor.getColumnIndex(Database.CARD_NUM)));
-            cursor.moveToNext();
+        try {
+            cards = q1.get();
+            costs = q2.get();
+        } catch (Exception e) {
+            Log.i(ACTIVITY_NAME, "Query Failed.");
         }
 
-        Log.i(ACTIVITY_NAME, "Cursor’s  column count =" + cursor.getColumnCount() );
-        for (int i = 0; i <cursor.getColumnCount();i++){
-            Log.i(ACTIVITY_NAME, "Column Name: "+ cursor.getColumnName(i));
+        balance = findViewById(R.id.balance);
+        for (String x : costs) {
+            DecimalFormat decimalFormat = new DecimalFormat("#.00");
+            String numberAsString = decimalFormat.format(x);
+            balance.setText("$" + numberAsString);
         }
 
         cardView = findViewById(R.id.card_view);
-        cursor.moveToFirst();
         /**
          * This is setting the information from our DialogBox to input it into the database.
          */
         cardView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String card = cursor.getString(cursor.getColumnIndex("CARD_NUMBER"));
-                String fname = cursor.getString(cursor.getColumnIndex("FIRST_NAME"));
-                String lname = cursor.getString(cursor.getColumnIndex("LAST_NAME"));
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long id) {
+                String card = cards.remove(i);
+
+                try {
+                    f = new dataQuery().execute(GET_INFO + card, Database.FNAME).get();
+
+                } catch (Exception e) {
+                    Log.i(ACTIVITY_NAME, "Query Failed.");
+                }
+
+                String fname = f.remove(0);
+
+                try {
+                    l = new dataQuery().execute(GET_INFO + card, Database.LNAME).get();
+                } catch (Exception e) {
+                    Log.i(ACTIVITY_NAME, "Query Failed.");
+                }
+
+                String lname = l.remove(0);
                 Log.i(ACTIVITY_NAME, card);
                 Bundle arguments = new Bundle();
                 Log.i("Passing Card Number", card);
@@ -156,11 +212,29 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        budgButton = findViewById(R.id.budget);
-        budgButton.setOnClickListener(new View.OnClickListener() {
+        aboutButton = findViewById(R.id.about);
+        aboutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i(ACTIVITY_NAME, "Clicked Budget Button");
+                Log.i(ACTIVITY_NAME, "Clicked About Button");
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                // Inflate and set the layout for the dialog
+                // Pass null as the parent view because its going in the dialog layout
+                final LayoutInflater inflater = LayoutInflater.from(MainActivity.this);
+                final View view = inflater.inflate(R.layout.about_dialog, null, false);
+                final TextView about = view.findViewById(R.id.about);
+
+                builder.setView(view)
+                        .setTitle(R.string.card_dialog)
+                        // Add action buttons
+                        .setNegativeButton(R.string.close, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                                return;
+                            }
+                        })
+                        .show();
             }
         });
 
@@ -178,7 +252,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        cardAdapter = new CardAdapter(this);
         addcard = findViewById(R.id.add_card);
         /**
          * When the 'Add Card' button is clicked it brings up a dialogBox to input your Card number,
@@ -196,7 +269,6 @@ public class MainActivity extends AppCompatActivity {
                 final LayoutInflater inflater = LayoutInflater.from(MainActivity.this);
                 final View view = inflater.inflate(R.layout.add_card_dialog, null, false);
                 final EditText cardNumber = view.findViewById(R.id.card_number);
-                Log.i(ACTIVITY_NAME, cardNumber.toString());
                 final EditText firstName = view.findViewById(R.id.firstName);
                 final EditText lastName = view.findViewById(R.id.lastName);
 
@@ -206,26 +278,42 @@ public class MainActivity extends AppCompatActivity {
                         .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {
-                                String num = cardNumber.getText().toString();
+                                final String num = cardNumber.getText().toString();
                                 String first = firstName.getText().toString();
                                 String last = lastName.getText().toString();
 
                                 if (num.length() == 16 && !first.equals("") && !last.equals("")) {
-                                    cards.add(num);
-                                    //Add all the views to the database.
-                                    ContentValues cValues = new ContentValues();
-                                    cValues.put(Database.CARD_NUM, num);
-                                    cValues.put(Database.FNAME, first);
-                                    cValues.put(Database.LNAME, last);
-                                    database.insert(Database.BANK_CARDS, "NullPlaceHolder", cValues);
-                                    cardAdapter.notifyDataSetChanged();
-                                    cardNumber.setText("");
+                                    if (!cards.contains(num)) {
+                                        cards.add(num);
+                                        //Add all the views to the database.
+                                        ContentValues cValues = new ContentValues();
+                                        cValues.put(Database.CARD_NUM, num);
+                                        cValues.put(Database.FNAME, first);
+                                        cValues.put(Database.LNAME, last);
+                                        database.insert(Database.BANK_CARDS, "NullPlaceHolder", cValues);
+                                        cardAdapter.notifyDataSetChanged();
+                                        cardNumber.setText("");
 
-                                    Log.i(ACTIVITY_NAME, "Item Added:" + cardNumber.getText().toString());
+                                        Log.i(ACTIVITY_NAME, "Item Added:" + cardNumber.getText().toString());
 
-                                    CharSequence text = ("Card Added.");
-                                    Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG);
-                                    toast.show();
+                                        CharSequence text = ("Card Added.");
+                                        Toast toast = Toast.makeText(getApplicationContext(), text, Toast.LENGTH_LONG);
+                                        toast.show();
+
+                                    } else {
+                                        View view = findViewById(R.id.linearLayout);
+                                        Snackbar snackbar = Snackbar.make(view, R.string.snack_bar_text, Snackbar.LENGTH_LONG);
+                                        snackbar.setAction(R.string.snack_bar_delete, new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                cards.remove(num);
+                                                Log.i("delete row: ", ""+num);
+                                                database.delete(Database.BANK_CARDS,Database.CARD_NUM+ "="+num,null);
+                                                cardAdapter.notifyDataSetChanged();
+                                            }
+                                        });
+                                        snackbar.show();
+                                    }
 
                                 } else {
                                     Log.i(ACTIVITY_NAME, "Invalid Input.");
@@ -242,7 +330,7 @@ public class MainActivity extends AppCompatActivity {
                                 return;
                             }
                         })
-                .show();
+                        .show();
             }
         });
 
