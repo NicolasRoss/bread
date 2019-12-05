@@ -20,9 +20,9 @@ public class Database extends SQLiteOpenHelper {
 
     //    TABLES ARE: USERS, BANK_CARDS, STOCKS, TRANSACTIONS,
     public static final String DB_NAME = "data.db";
-
-//    USERS
-    public static final int VERSION_NUM = 5;
+  
+    public static final int VERSION_NUM = 6;
+  
     public static final String USERS = "USERS";
     public static final String FNAME = "FIRST_NAME";
     public static final String LNAME = "LAST_NAME";
@@ -47,7 +47,7 @@ public class Database extends SQLiteOpenHelper {
             + PW + " text not null);";
     //    BANK_CARDS
     public static final String BANK_CARD_CREATE = "create table "
-            + BANK_CARDS + "(" + EMAIL + "text not null, " + CARD_NUM + " text not null, " + FNAME
+            + BANK_CARDS + "(" + CARD_NUM + " text not null, " + FNAME
             + " text not null, " + LNAME + " text not null);";
     //    STOCKS
     public static final String STOCK_CREATE = "create table "
