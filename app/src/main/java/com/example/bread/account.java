@@ -1,6 +1,8 @@
 package com.example.bread;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.app.Activity;
@@ -11,7 +13,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -24,6 +28,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,22 +38,46 @@ import com.google.android.material.snackbar.Snackbar;
 import java.util.ArrayList;
 
 public class account extends AppCompatActivity {
+    transFragment fragment;
+    FragmentTransaction ft;
+    ProgressBar pb;
+    private Handler handler = new Handler();
+    int progress = 0;
     protected static final String ACTIVITY_NAME = "Account";
     static final String GET_TRANSACTIONS = "SELECT COST FROM TRANSACTIONS";
-    final ArrayList<String> trans = new ArrayList<>();
-
+    ArrayList<String> trans;
+    TransAdapter transAdapter;
     static SQLiteDatabase database;
     Cursor cursor;
 
     //FrameLayout frameLayout;
     //TransFragment fragment;
     //FragmentTransaction fragmentTransaction;
-
+    protected class dataQuery extends AsyncTask<String, Integer, ArrayList<String>> {
+        @Override
+        protected ArrayList<String> doInBackground(String... strings) {
+            Log.i(ACTIVITY_NAME, "Started async");
+            String name = strings[0];
+            ArrayList<String> newTrans = new ArrayList<>();
+            final Cursor cursor = database.rawQuery(name, null);
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                Log.i(ACTIVITY_NAME, "Cursors column count =" + cursor.getColumnCount());
+                newTrans.add(cursor.getString(cursor.getColumnIndex(Database.COST)));
+                cursor.moveToNext();
+            }
+            return newTrans;
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_account);
+        trans = new ArrayList<>();
+        transAdapter = new TransAdapter(this);
         Log.i(ACTIVITY_NAME, "In onCreate()");
+        pb = findViewById(R.id.progressBar);
+        pb.setMax(100);
         final Button buttonAdd = findViewById(R.id.btnAddTrans);
         final Button buttonDel = findViewById(R.id.btnDel);
         final ListView lstTrans = findViewById(R.id.listview_transactions);
@@ -57,27 +86,15 @@ public class account extends AppCompatActivity {
         Database dbHelper = new Database(this);
         database = dbHelper.getWritableDatabase();
         //System.out.println("HERE");
-        cursor = database.rawQuery(GET_TRANSACTIONS,null);
-        cursor.moveToFirst();
-        while(!cursor.isAfterLast()){
-            Log.i(ACTIVITY_NAME,"VALUE: "+ cursor.getString(cursor.getColumnIndex(Database.COST)));
-            trans.add(cursor.getString(cursor.getColumnIndex(Database.COST)));
-            cursor.moveToNext();
+        dataQuery q1 = new dataQuery();
+        q1.execute(GET_TRANSACTIONS);
+        try{
+            trans = q1.get();
+        }catch(Exception e){
+            Log.i(ACTIVITY_NAME,"Query Failed");
         }
 
-        class TransAdapter extends ArrayAdapter {
-            public TransAdapter(Context ctx){super(ctx,0);}
-            public int getCount(){return trans.size();}
-            public String getItem(int position){return trans.get(position);}
-            public View getView(int position, View convertView, ViewGroup parent){
-                LayoutInflater inflater = account.this.getLayoutInflater();
-                View result = inflater.inflate(R.layout.add_trans,null);
-                TextView message = result.findViewById(R.id.transaction);
-                message.setText(getItem(position));
-                return result;
-            }
-        }
-        final TransAdapter transAdapter = new TransAdapter(this);
+
         buttonAdd.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,12 +105,36 @@ public class account extends AppCompatActivity {
                     if(value.indexOf('.') == -1){
                         value = value +  ".00";
                     }
-                    trans.add(value);
+
                     ContentValues cValues = new ContentValues();
                     cValues.put(Database.COST,value);
                     cValues.put(Database.EMAIL,"test");
+                    //PROGRESS BAR STUFF------------------
+                    new Thread(new Runnable(){
+                       @Override
+                       public void run(){
+                           while(progress < 100){
+                               progress+=1;
+                               android.os.SystemClock.sleep(5);
+                               handler.post(new Runnable(){
+                                  @Override
+                                  public void run(){
+                                      pb.setProgress(progress);
+                                  }
+                               });
+                           }
+                       }
+                    }).start();
+                    //------------------------------------------
+                    //System.out.println(progress);
+
+                    Log.i(ACTIVITY_NAME,"Progress is at 100");
                     database.insert(Database.TRANSACTIONS,"NullPlaceHolder",cValues);
+                    trans.add(value);
                     transAdapter.notifyDataSetChanged();
+                    progress = 0;
+                    pb.setProgress(0);
+
                 }catch(Exception e){
                     android.app.AlertDialog.Builder builder = new AlertDialog.Builder(account.this);
                     builder.setMessage("Input Error, please enter a valid float value.")
@@ -133,22 +174,62 @@ public class account extends AppCompatActivity {
 
             }
         }));
-
         lstTrans.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String text = "Value of transaction: ";
-                text = text + lstTrans.getItemAtPosition(i).toString();
-                int duration = Snackbar.LENGTH_LONG;
+                String cost = trans.remove(i);
+                //String text = "Value of transaction: ";
+                Bundle arguments = new Bundle();
+                arguments.putString("cost",cost);
+                //text = text + lstTrans.getItemAtPosition(i).toString();
+
+                Intent intent = new Intent(account.this, transDetails.class);
+                intent.putExtras(arguments);
+                startActivityForResult(intent, 10);
+
+                //int duration = Snackbar.LENGTH_LONG;
                 //Toast toast = Toast.makeText(getApplicationContext(), text, duration);
                 //toast.show();
-                Snackbar.make(view,text,duration).setAction("Reaction",null).show();
+                //Snackbar.make(view,text,duration).setAction("Reaction",null).show();
             }
         });
         lstTrans.setAdapter(transAdapter);
-
     }
+    /*
+    private void setProgressValue(final int progress) {
+        // set the progress
+        pb.setProgress(progress);
+        // thread is used to change the progress value
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                    try {
+                        Thread.sleep(10);
+                        thread.interrupt();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    setProgressValue(progress + 1);
+                    System.out.println(progress);
+                }
+        });
+        thread.start();
+    }
+     */
 
+    class TransAdapter extends ArrayAdapter {
+        public TransAdapter(Context ctx){super(ctx,0);}
+        public int getCount(){return trans.size();}
+        public String getItem(int position){return trans.get(position);}
+        public View getView(int position, View convertView, ViewGroup parent){
+            LayoutInflater inflater = account.this.getLayoutInflater();
+            View result = inflater.inflate(R.layout.trans_display,null);
+            TextView message = result.findViewById(R.id.trans_text);
+            message.setText(getItem(position));
+            return result;
+
+        }
+    }
     public boolean onCreateOptionsMenu(Menu m) {
         getMenuInflater().inflate(R.menu.main_toolbar_menu, m);
         return true;
@@ -222,5 +303,26 @@ public class account extends AppCompatActivity {
         super.onDestroy();
         database.close();
         Log.i(ACTIVITY_NAME, "In onDestroy()");
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK){
+            String row = data.getStringExtra("row");
+            Log.i("delete row: ", ""+row);
+            database.delete(Database.TRANSACTIONS,Database.COST+ "="+row,null);
+            trans.remove(row);
+            transAdapter.notifyDataSetChanged();
+        }
+
+    }
+    void deleteRow(String row){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        database.delete(Database.TRANSACTIONS,Database.COST+ "="+ row,null);
+        //int index = trans.indexOf(row);
+        trans.remove(row);
+        ft = fragmentManager.beginTransaction();
+        ft.remove(fragment).commit();
+        transAdapter.notifyDataSetChanged();
     }
 }

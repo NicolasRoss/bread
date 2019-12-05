@@ -10,6 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".cardDetails"></activity>
+        <activity android:name=".transDetails"></activity>
         <activity android:name=".account"></activity>
         <activity android:name=".stonks" />
         <activity android:name=".login">
